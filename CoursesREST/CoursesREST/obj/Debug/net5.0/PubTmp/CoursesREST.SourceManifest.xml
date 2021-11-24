@@ -1,0 +1,5 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<sitemanifest>
+  <IisApp path="C:\Users\Jonas\Desktop\SAITYNAS\Lab1\CoursesREST\CoursesREST\obj\Debug\net5.0\PubTmp\Out\" />
+  <dbfullsql path="C:\Users\Jonas\Desktop\SAITYNAS\Lab1\CoursesREST\CoursesREST\obj\Debug\net5.0\PubTmp\EFSQLScripts\CoursesREST.Data.Context.sql" />
+</sitemanifest>

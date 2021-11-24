@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+This file is used by the publish/package process of your Web project. You can customize the behavior of this process
+by editing this MSBuild file. In order to learn more about this please visit https://go.microsoft.com/fwlink/?LinkID=208121. 
+-->
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <TimeStampOfAssociatedLegacyPublishXmlFile />
+    <EncryptedPassword>AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAxmkiQgpsnEmD8pgFJLc3XgAAAAACAAAAAAAQZgAAAAEAACAAAABPdLCk1drQIc0HWFQmMNQHDP4SCoF7kSAhQXrScxf1RgAAAAAOgAAAAAIAACAAAADEFaWgfsNtK3IcpQcCUloflTBlKoolgLTKtiv1lufd74AAAAAZOgDCtCGWFpNAkks45Q1zB4avQp03fUtmwwtSg7YR8A6iCND7ANIev186At29HBdAhL2IINQUWJuScvxEXyVwarwXTFvVwDRz/vnAtm96iUlbZWD9nqSzqNrtK8T5UG+/8NBPilNwngmXgjifqsIVUdoeE682K6ome9aleeVlXEAAAACCNFlJuUXE7ev3VbvW2kz5nQnQNs9E6dy850RXFmtQ/zuRJ3PesQPp5k7UgeZ9JofqcPapzH9VoO+FfWHnxtqt</EncryptedPassword>
+    <History>True|2021-10-08T11:40:26.0712776Z;True|2021-10-08T14:28:21.9060658+03:00;False|2021-10-08T14:27:32.5900333+03:00;True|2021-10-08T14:26:03.1343843+03:00;False|2021-10-08T14:22:36.0000386+03:00;False|2021-10-08T14:15:49.5631911+03:00;False|2021-10-08T14:09:21.9561006+03:00;False|2021-10-08T14:03:19.2596458+03:00;True|2021-10-08T03:08:51.3092578+03:00;False|2021-10-08T03:07:33.9452026+03:00;</History>
+  </PropertyGroup>
+  <ItemGroup>
+    <EFMigrations Include="CoursesREST.Data.Context">
+      <Value>Data Source=tcp:coursesrestdbserver.database.windows.net,1433%3bInitial Catalog=CoursesREST_db%3bUser Id=coursesadmin%40coursesrestdbserver%3bPassword=Coursesfornoobs123</Value>
+    </EFMigrations>
+  </ItemGroup>
+</Project>
