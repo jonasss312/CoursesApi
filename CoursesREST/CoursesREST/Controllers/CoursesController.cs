@@ -41,6 +41,8 @@ namespace CoursesREST.Controllers
 			return Ok(course);
 		}
 
+		/*
+		 * Neveikia nes Course reikalauja userId, o user id gaunu automatiskai ne is objekto
 		[HttpPost]
 		[Authorize(Roles = DemoRestUserRole.User)]
 		public async Task<ActionResult<Course>> Insert(int categoryId, Course course)
@@ -57,6 +59,30 @@ namespace CoursesREST.Controllers
 			course.UserId = userId;
 			course.CategoryId = categoryId;
 			await _coursesRepository.Insert(course);
+
+			return Created($"/api/categories/{categoryId}/courses/{course.Id}", course);
+		}*/
+
+		//Pakeistas
+		[HttpPost]
+		//[Authorize(Roles = DemoRestUserRole.User)]
+		public async Task<ActionResult<Course>> Insert(int categoryId, CourseDto course)
+		{
+			var category = await _categoriesRepository.Get(categoryId);
+			if (category == null) return NotFound($"Couldn't find a category with id of {categoryId}");
+
+			ClaimsIdentity claimIdentity = User.Identity as ClaimsIdentity;
+			var userId = claimIdentity?.FindFirst(CustomClaim.UserId)?.Value;
+
+			Course newCourse = new Course();
+
+			newCourse.Id = course.Id;
+			newCourse.Name = course.Name;
+			newCourse.Description = course.Description;
+			newCourse.CategoryId = categoryId;
+			newCourse.UserId = userId;
+			newCourse.CategoryId = categoryId;
+			await _coursesRepository.Insert(newCourse);
 
 			return Created($"/api/categories/{categoryId}/courses/{course.Id}", course);
 		}
