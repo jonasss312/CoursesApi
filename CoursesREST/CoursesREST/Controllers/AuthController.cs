@@ -64,5 +64,18 @@ namespace CoursesREST.Controllers
 
 			return Ok(new SuccessfulLoginResponseDto(accessToken));
 		}
+
+		[HttpPost]
+		[Route("refresh")]
+		public async Task<ActionResult> Refresh(RefreshDto refreshDto)
+		{
+			var user = await _userManager.FindByNameAsync(refreshDto.UserName);
+			if (user == null)
+				return BadRequest("Username or password invalid");
+
+			var accessToken = await _tokenManager.CreateAcceessTokenAsync(user);
+
+			return Ok(new SuccessfulLoginResponseDto(accessToken));
+		}
 	}
 }

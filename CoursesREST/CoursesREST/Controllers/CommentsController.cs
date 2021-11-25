@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace CoursesREST.Controllers
@@ -40,30 +41,30 @@ namespace CoursesREST.Controllers
 
 		[HttpPost]
 		[Authorize(Roles = DemoRestUserRole.User)]
-		public async Task<ActionResult<Comment>> Insert(int categoryId, int courseId, Comment comment)
+		public async Task<ActionResult<Comment>> Insert(int categoryId, int courseId, CommentDto comment)
 		{
-			var category = await _coursesRepository.Get(categoryId, courseId);
-			if (category == null) return NotFound($"Couldn't find a course with id of {courseId}");
+			var course = await _coursesRepository.Get(categoryId, courseId);
+			if (course == null) return NotFound($"Couldn't find a course with id of {courseId}");
 
-			var authorizationResult = await _authorizationService.AuthorizeAsync(User, comment, "User");
-			
-			if (!authorizationResult.Succeeded)
-			{
-				return Forbid();
-			}
-            else 
-			{
-				string userId = User.FindFirst(CustomClaim.UserId)?.Value;
-				comment.CourseId= courseId;
-				comment.UserId = userId;
-				await _commentsRepository.Insert(comment);
+			ClaimsIdentity claimIdentity = User.Identity as ClaimsIdentity;
+			string userId = User.FindFirst(CustomClaim.UserId)?.Value;
+			string userName = User.Identity.Name;
 
-				return Created($"/api/categories/{categoryId}/courses/{courseId}/courses/{comment.Id}", comment);
-			}
+			Comment newComment = new Comment();
+			newComment.Course = course;
+			newComment.CourseId = courseId;
+			newComment.UserId = userId;
+			newComment.Text = comment.Text;
+			newComment.CreationTime = DateTime.Now;
+			newComment.UserName = userName;
+			await _commentsRepository.Insert(newComment);
+
+			return Created($"/api/categories/{categoryId}/courses/{courseId}/courses/{newComment.Id}", newComment);
 		}
 
 		[HttpPatch("{id}")]
-		public async Task<ActionResult<Comment>> Update(int categoryId, int courseId, int id, Comment comment)
+		[Authorize(Roles = DemoRestUserRole.User)]
+		public async Task<ActionResult<Comment>> Update(int categoryId, int courseId, int id, CommentDto comment)
 		{
 			var category = await _coursesRepository.Get(categoryId, courseId);
 			if (category == null) return NotFound($"Couldn't find a course with id of {courseId}");
@@ -72,7 +73,11 @@ namespace CoursesREST.Controllers
 			if (oldComment == null)
 				return NotFound();
 
-			oldComment.User = comment.User;
+			var authorizationResult = await _authorizationService.AuthorizeAsync(User, oldComment, PolicyNames.SameUser);
+
+			if (!authorizationResult.Succeeded)
+				return Forbid();
+
 			oldComment.Text = comment.Text;
 			oldComment.CreationTime = DateTime.Now;
 
@@ -82,10 +87,16 @@ namespace CoursesREST.Controllers
 		}
 
 		[HttpDelete("{id}")]
+		[Authorize(Roles = DemoRestUserRole.User)]
 		public async Task<ActionResult<Comment>> Delete(int courseId, int id)
 		{
 			var comment = await _commentsRepository.Get(courseId, id);
 			if (comment == null) return NotFound();
+
+			var authorizationResult = await _authorizationService.AuthorizeAsync(User, comment, PolicyNames.SameUser);
+
+			if (!authorizationResult.Succeeded)
+				return Forbid();
 
 			await _commentsRepository.Delete(comment);
 

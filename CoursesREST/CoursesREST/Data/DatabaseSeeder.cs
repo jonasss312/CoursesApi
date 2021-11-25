@@ -46,6 +46,56 @@ namespace CoursesREST.Data
 					await _userManager.AddToRolesAsync(newAdminUser, DemoRestUserRole.All);
 				}
 			}
+
+			newAdminUser = new DemoRestUser
+			{
+				UserName = "renewAdmin",
+				Email = "admin@mail.com"
+			};
+
+			existingAdminUser = await _userManager.FindByNameAsync(newAdminUser.UserName);
+			if (existingAdminUser == null)
+			{
+				var createAdminUserResult = await _userManager.CreateAsync(newAdminUser, "VerySafePassword1!");
+				if (createAdminUserResult.Succeeded)
+				{
+					await _userManager.AddToRolesAsync(newAdminUser, DemoRestUserRole.All);
+				}
+			}
+
+			var newPremiumUser = new DemoRestUser
+			{
+				UserName = "premiumUser",
+				Email = "admin@mail.com"
+			};
+
+			var existingPremiumUser = await _userManager.FindByNameAsync(newPremiumUser.UserName);
+			if (existingPremiumUser == null)
+			{
+				var createPremiumUserResult = await _userManager.CreateAsync(newPremiumUser, "VerySafePassword1!");
+				if (createPremiumUserResult.Succeeded)
+				{
+					await _userManager.AddToRoleAsync(newPremiumUser, DemoRestUserRole.User);
+					await _userManager.AddToRoleAsync(newPremiumUser, DemoRestUserRole.PremiumUser);
+				}
+			}
+
+			newPremiumUser = new DemoRestUser
+			{
+				UserName = "premiumUser2",
+				Email = "admin@mail.com"
+			};
+
+			existingPremiumUser = await _userManager.FindByNameAsync(newPremiumUser.UserName);
+			if (existingPremiumUser == null)
+			{
+				var createPremiumUserResult = await _userManager.CreateAsync(newPremiumUser, "VerySafePassword1!");
+				if (createPremiumUserResult.Succeeded)
+				{
+					await _userManager.AddToRoleAsync(newPremiumUser, DemoRestUserRole.User);
+					await _userManager.AddToRoleAsync(newPremiumUser, DemoRestUserRole.PremiumUser);
+				}
+			}
 		}
 	}
 }

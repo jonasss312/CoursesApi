@@ -73,8 +73,9 @@ namespace CoursesREST
 			}
 
 			app.UseRouting();
-			app.UseAuthorization();
 			app.UseAuthentication();
+			app.UseAuthorization();
+			app.UseMiddleware<ExcpMid>();
 
 			app.UseEndpoints(endpoints =>
 			{

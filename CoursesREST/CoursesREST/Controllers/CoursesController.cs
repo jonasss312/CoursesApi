@@ -41,31 +41,8 @@ namespace CoursesREST.Controllers
 			return Ok(course);
 		}
 
-		/*
-		 * Neveikia nes Course reikalauja userId, o user id gaunu automatiskai ne is objekto
 		[HttpPost]
-		[Authorize(Roles = DemoRestUserRole.User)]
-		public async Task<ActionResult<Course>> Insert(int categoryId, Course course)
-		{
-			var category = await _categoriesRepository.Get(categoryId);
-			if (category == null) return NotFound($"Couldn't find a category with id of {categoryId}");
-
-			
-				//string userId = User.FindFirst(CustomClaim.UserId)?.Value;
-				
-			ClaimsIdentity claimIdentity = User.Identity as ClaimsIdentity;
-			var userId = claimIdentity?.FindFirst(CustomClaim.UserId)?.Value;
-
-			course.UserId = userId;
-			course.CategoryId = categoryId;
-			await _coursesRepository.Insert(course);
-
-			return Created($"/api/categories/{categoryId}/courses/{course.Id}", course);
-		}*/
-
-		//Pakeistas
-		[HttpPost]
-		//[Authorize(Roles = DemoRestUserRole.User)]
+		[Authorize(Roles = DemoRestUserRole.PremiumUser)]
 		public async Task<ActionResult<Course>> Insert(int categoryId, CourseDto course)
 		{
 			var category = await _categoriesRepository.Get(categoryId);
@@ -82,14 +59,15 @@ namespace CoursesREST.Controllers
 			newCourse.CategoryId = categoryId;
 			newCourse.UserId = userId;
 			newCourse.CategoryId = categoryId;
+			newCourse.Category = category;
 			await _coursesRepository.Insert(newCourse);
 
 			return Created($"/api/categories/{categoryId}/courses/{course.Id}", course);
 		}
 
 		[HttpPatch("{id}")]
-		[Authorize(Roles = DemoRestUserRole.User)]
-		public async Task<ActionResult<Course>> Update(int categoryId, int id, Course course)
+		[Authorize(Roles = DemoRestUserRole.PremiumUser)]
+		public async Task<ActionResult<Course>> Update(int categoryId, int id, CourseDto course)
 		{
 			var category = await _categoriesRepository.Get(categoryId);
 			if (category == null) return NotFound($"Couldn't find a category with id of {categoryId}");
@@ -97,6 +75,10 @@ namespace CoursesREST.Controllers
 			var oldCourse = await _coursesRepository.Get(categoryId, id);
 			if (oldCourse == null)
 				return NotFound();
+
+			var authenticationResult = await _authorizationService.AuthorizeAsync(User, oldCourse, PolicyNames.SameUser);
+			if (!authenticationResult.Succeeded)
+				return Forbid();
 
 			oldCourse.Name = course.Name;
 			oldCourse.Description = course.Description;
@@ -107,11 +89,15 @@ namespace CoursesREST.Controllers
 		}
 
 		[HttpDelete("{id}")]
-		[Authorize(Roles = DemoRestUserRole.User)]
+		[Authorize(Roles = DemoRestUserRole.PremiumUser)]
 		public async Task<ActionResult<Course>> Delete(int categoryId, int id)
 		{
 			var courses = await _coursesRepository.Get(categoryId, id);
 			if (courses == null) return NotFound();
+
+			var authenticationResult = await _authorizationService.AuthorizeAsync(User, courses, PolicyNames.SameUser);
+			if (!authenticationResult.Succeeded)
+				return Forbid();
 
 			await _coursesRepository.Delete(courses);
 

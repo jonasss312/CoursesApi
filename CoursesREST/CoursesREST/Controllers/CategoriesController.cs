@@ -1,4 +1,6 @@
 ﻿using CoursesREST.Data;
+using CoursesREST.Data.Auth.Model;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -32,6 +34,7 @@ namespace CoursesREST.Controllers
 		}
 
 		[HttpPost]
+		[Authorize(Roles = DemoRestUserRole.Admin)]
 		public async Task<ActionResult<Category>> Insert(Category category)
 		{
 			await _categoriesRepository.Insert(category);
@@ -39,6 +42,7 @@ namespace CoursesREST.Controllers
 		}
 
 		[HttpPatch("{id}")]
+		[Authorize(Roles = DemoRestUserRole.Admin)]
 		public async Task<ActionResult<Category>> Update(int id, Category category)
 		{
 			var exists_category = await _categoriesRepository.Get(id);
@@ -53,6 +57,7 @@ namespace CoursesREST.Controllers
 		}
 
 		[HttpDelete("{id}")]
+		[Authorize(Roles = DemoRestUserRole.Admin)]
 		public async Task<ActionResult<Category>> Delete(int id)
 		{
 			var exists_category = await _categoriesRepository.Get(id);
